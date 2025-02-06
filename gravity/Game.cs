@@ -22,6 +22,10 @@ namespace MohawkGame2D
         Pipe[] pipes = new Pipe[MaxPipes]; // Array to hold the pipes
         int pipeIndex = 0; // Tracks the next available pipe slot
 
+        // Flavor Element-related variables (e.g., clouds)
+        const int MaxClouds = 3; // Number of clouds (flavor elements)
+        Cloud[] clouds = new Cloud[MaxClouds]; // Array to hold the clouds
+
         // Score-related variables
         int score = 0; // The player's score
         float previousPipeX = 0; // Keeps track of the last pipe X position the bird passed
@@ -41,6 +45,25 @@ namespace MohawkGame2D
             }
         }
 
+        // Flavor Element Class (Clouds)
+        public class Cloud
+        {
+            public float X; // X position of the cloud
+            public float Y; // Y position of the cloud
+            public float Speed; // Speed at which the cloud moves
+            public float Width; // Width of the cloud (ellipse)
+            public float Height; // Height of the cloud (ellipse)
+
+            public Cloud(float x, float y, float speed, float width, float height)
+            {
+                X = x;
+                Y = y;
+                Speed = speed;
+                Width = width;
+                Height = height;
+            }
+        }
+
         /// <summary>
         ///     Setup runs once before the game loop begins.
         /// </summary>
@@ -54,6 +77,17 @@ namespace MohawkGame2D
             // Create initial pipes
             pipes[pipeIndex] = new Pipe(Window.Width + 100); // Add a pipe at the far right
             pipeIndex = (pipeIndex + 1) % MaxPipes; // Move to next pipe slot
+
+            // Create initial clouds (flavor elements)
+            for (int i = 0; i < MaxClouds; i++)
+            {
+                float cloudY = Random.Float(50, Window.Height / 2); // Random Y position
+                float cloudSpeed = Random.Float(30, 50); // Random speed for each cloud
+                float cloudWidth = Random.Float(50, 150); // Random width for cloud ellipse
+                float cloudHeight = Random.Float(20, 60); // Random height for cloud ellipse
+
+                clouds[i] = new Cloud(Window.Width + 100 + (i * 100), cloudY, cloudSpeed, cloudWidth, cloudHeight); // Spread clouds out
+            }
         }
 
         /// <summary>
@@ -81,7 +115,29 @@ namespace MohawkGame2D
                 velocity.Y = -velocity.Y * friction;
             }
 
+
+            // Move and draw the clouds (flavor elements)
+            for (int i = 0; i < MaxClouds; i++)
+            {
+                Cloud cloud = clouds[i];
+
+                // Move cloud to the left
+                cloud.X -= cloud.Speed * Time.DeltaTime;
+
+                // If cloud goes offscreen, reset its position
+                if (cloud.X + cloud.Width < 0)
+                {
+                    cloud.X = Window.Width + 100;
+                    cloud.Y = Random.Float(50, Window.Height / 2); // Randomize the Y position again
+                }
+
+                // Draw the cloud as an ellipse
+                Draw.FillColor = Color.White;
+                Draw.Ellipse(cloud.X, cloud.Y, cloud.Width, cloud.Height); // Draw as ellipse
+            }
+
             // Move and draw the pipes
+
             for (int i = 0; i < MaxPipes; i++)
             {
                 Pipe pipe = pipes[i];
@@ -114,6 +170,7 @@ namespace MohawkGame2D
                 Draw.Rectangle(pipe.X, pipe.TopHeight + GapHeight, PipeWidth, Window.Height - (pipe.TopHeight + GapHeight));
             }
 
+            
             // Draw the bird with the color from the playerColor array
             Draw.FillColor = playerColor[colorIndex]; // Set the bird color
             Draw.Circle(position, radius);
