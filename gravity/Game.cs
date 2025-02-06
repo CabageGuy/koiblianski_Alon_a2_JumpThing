@@ -28,7 +28,7 @@ namespace MohawkGame2D
 
         // Score-related variables
         int score = 0; // The player's score
-        float previousPipeX = 0; // Keeps track of the last pipe X position the bird passed
+        float previousPipeX = 0; // Keeps track of the last pipe X position the Circle passed
 
         public const float PipeWidth = 50; // Width of the pipe
         public const float GapHeight = 100; // The height of the gap between the pipes
@@ -72,7 +72,7 @@ namespace MohawkGame2D
             Window.SetTitle("Jump Thing");
             Window.SetSize(400, 400);
 
-            position = new Vector2(100, Window.Height / 2); // Start bird in the center vertically
+            position = new Vector2(100, Window.Height / 2); // Start Circle in the center vertically
 
             // Create initial pipes
             pipes[pipeIndex] = new Pipe(Window.Width + 100); // Add a pipe at the far right
@@ -103,7 +103,7 @@ namespace MohawkGame2D
             if (backgroundX <= -Window.Width) // Reset when background moves offscreen
                 backgroundX = 0;
 
-            // Update velocity and position of the bird
+            // Update velocity and position of the Circle
             velocity.Y += Time.DeltaTime * speed;
             position += velocity;
 
@@ -153,7 +153,7 @@ namespace MohawkGame2D
                     pipes[i] = new Pipe(Window.Width + 25); // Add new pipe at the far right
                 }
 
-                // Check if the bird has passed the pipe (to increase the score)
+                // Check if the Circle has passed the pipe (to increase the score)
                 if (position.X > pipe.X + PipeWidth && previousPipeX != pipe.X)
                 {
                     score++; // Increment score when passing a pipe
@@ -171,8 +171,8 @@ namespace MohawkGame2D
             }
 
             
-            // Draw the bird with the color from the playerColor array
-            Draw.FillColor = playerColor[colorIndex]; // Set the bird color
+            // Draw the Circle with the color from the playerColor array
+            Draw.FillColor = playerColor[colorIndex]; // Set the Circle color
             Draw.Circle(position, radius);
 
             // Handle Circle jump on spacebar press
